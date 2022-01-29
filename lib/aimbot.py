@@ -53,7 +53,7 @@ class aimbot:
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
 
-    def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, mouse_delay, mouse_movement_scale, image_quality):
+    def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, mouse_delay, mouse_movement_scale, targeting_position):
         if not torch.cuda.is_available():
             print("")
             print("[ERROR] CUDA not available.")
@@ -66,9 +66,9 @@ class aimbot:
         self.targeting_scale = targeting_scale
         self.mouse_delay = mouse_delay
         self.mouse_movement_scale = mouse_movement_scale
-        self.image_quality = image_quality
+        self.targeting_position = targeting_position
 
-        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='lib/weights.pt', force_reload=True)
+        self.model = torch.hub.load('lib/yolov5-master/', 'custom', path='lib/weights.pt/', source='local')
         self.model.conf = model_confidence
         self.model.iou = model_iou
         self.model.classes = [0]
@@ -144,7 +144,7 @@ class aimbot:
         best_detection = {}
         start_time = time.time()
 
-        raw_results = self.model(image, self.image_quality)
+        raw_results = self.model(image, 208)
         results = raw_results.xyxy[0]
 
         if len(results) > 0:
@@ -158,7 +158,7 @@ class aimbot:
 
                 x1y1 = x1, y1
                 x2y2 = x2, y2
-                chest = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 2.3))
+                chest = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / self.targeting_position))
                 confidence = results[x][4].item()
 
                 exclusion_zone = x1 < 15
