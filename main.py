@@ -1,7 +1,6 @@
 from lib.aimbot import aimbot
 import tkinter as tk
 from tkinter import ttk
-import tkinter.messagebox
 import json
 from pynput import keyboard
 import numpy as np
@@ -71,12 +70,6 @@ class eclipse_menu(tk.Tk):
         self.mouse_scale_label = ttk.Label(self, text="Mouse Scale: ")
         self.mouse_scale_label.place(x=312, y=240)
 
-        self.image_quality = 0
-        self.image_quality_slider = ttk.Scale(self, from_=208, to=416, length=600, command=self.update_image_quality_slider, orient='horizontal')
-        self.image_quality_slider.place(x=60, y=315)
-        image_quality_label = ttk.Label(self, text="Lower <--- Aimbot Range ---> Higher")
-        image_quality_label.place(x=255, y=295)
-
         self.start_button = ttk.Button(text="Start", command=self.start_button_press)
         self.start_button.place(x=320, y=130)
 
@@ -86,9 +79,6 @@ class eclipse_menu(tk.Tk):
         self.mouse_scale = float(round((self.mouse_scale_slider.get() / 100), 2))
         self.mouse_scale_label.configure(text="Mouse Scale: " + str(self.mouse_scale))
 
-    def update_image_quality_slider(self, event):
-        self.image_quality = int(self.image_quality_slider.get())
-
     def load_gui_data(self):
         if os.path.isfile("lib/config.json"):
             config_data = get_config_file()
@@ -96,15 +86,12 @@ class eclipse_menu(tk.Tk):
             xy_sensitivity = config_data["xy_sensitivity"]
             targeting_sensitivity = config_data["targeting_sensitivity"]
             mouse_scale = int(config_data["mouse_scale"] * 100)
-            image_quality = config_data["image_quality"]
 
             self.xy_sensitivity_input.insert(0, xy_sensitivity)
             self.targeting_sensitivity_input.insert(0, targeting_sensitivity)
             self.mouse_scale_slider.set(mouse_scale)
-            self.image_quality_slider.set(image_quality)
         else:
             self.mouse_scale_slider.set(100)
-            self.image_quality_slider.set(312)
 
     def start_button_press(self):
         global run_aimbot
@@ -116,7 +103,6 @@ class eclipse_menu(tk.Tk):
         xy_sensitivity = float(self.xy_sensitivity_input.get())
         targeting_sensitivity = float(self.targeting_sensitivity_input.get())
         mouse_scale = float(self.mouse_scale)
-        image_quality = int(self.image_quality)
 
         normal_scale = (10 / float(xy_sensitivity))
         targeting_scale = (10 / (float(xy_sensitivity) * ((float(targeting_sensitivity)) / 100)))
@@ -125,8 +111,7 @@ class eclipse_menu(tk.Tk):
                        "targeting_sensitivity": targeting_sensitivity,
                        "normal_scale": normal_scale,
                        "targeting_scale": targeting_scale,
-                       "mouse_scale": mouse_scale,
-                       "image_quality": image_quality}
+                       "mouse_scale": mouse_scale}
 
         with open('lib/config.json', 'w', encoding='utf-8') as f:
             json.dump(config_data, f, ensure_ascii=False, indent=4)
@@ -145,9 +130,8 @@ if __name__ == "__main__":
         normal_scale = config_file["normal_scale"]
         targeting_scale = config_file["targeting_scale"]
         mouse_scale = config_file["mouse_scale"]
-        image_quality = config_file["image_quality"]
 
-        aimbot = aimbot(0.6, 0.01, normal_scale, targeting_scale, 0.001, mouse_scale, image_quality)
+        aimbot = aimbot(0.65, 0.45, normal_scale, targeting_scale, 0.001, mouse_scale, 2.3)
 
         listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
         listener.start()
