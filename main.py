@@ -8,6 +8,10 @@ import mss
 import cv2 as cv
 import os
 
+ar_hotkey = "1"
+shotgun_hotkey = "2"
+smg_hotkey = "3"
+
 
 def on_key_release(key):
     try:
@@ -23,6 +27,14 @@ def on_key_press(key):
     try:
         if key == keyboard.Key.f1:
             aimbot.update_aimimg_status("ON")
+
+        if 'char' in dir(key):
+            if key.char == ar_hotkey:
+                aimbot.selected_weapon = 1
+            if key.char == shotgun_hotkey:
+                aimbot.selected_weapon = 2
+            if key.char == smg_hotkey:
+                aimbot.selected_weapon = 3
     except NameError:
         pass
 
@@ -61,7 +73,7 @@ class eclipse_menu(tk.Tk):
         targeting_sensitivity_label = ttk.Label(self, text="Targeting Sensitivity")
         targeting_sensitivity_label.place(x=500, y=110)
 
-        slider_warning_label = ttk.Label(self, text="Before adjusting any of the sliders values, read everything starting and down from the setup section in the README file.")
+        slider_warning_label = ttk.Label(self, text="")
         slider_warning_label.place(x=45, y=190)
 
         self.mouse_scale = 0
@@ -131,8 +143,8 @@ if __name__ == "__main__":
         targeting_scale = config_file["targeting_scale"]
         mouse_scale = config_file["mouse_scale"]
 
-        aimbot = aimbot(0.65, 0.45, normal_scale, targeting_scale, 0.001, mouse_scale, 2.3)
-
+        aimbot = aimbot(0.5, 0.45, normal_scale, targeting_scale, 0.001, mouse_scale)
+        aimbot.selected_weapon = 1
         listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
         listener.start()
 
@@ -142,6 +154,8 @@ if __name__ == "__main__":
             detection = aimbot.inference(screenshot)
 
             aimbot.move_crosshair(detection)
+
+            aimbot.auto_fire(detection)
 
             screenshot = aimbot.draw_on_image(screenshot, detection)
 
