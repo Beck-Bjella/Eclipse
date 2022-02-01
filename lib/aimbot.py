@@ -50,10 +50,11 @@ class aimbot:
     screenshot_region = {'left': 752, 'top': 332, 'width': 416, 'height': 416}
     aiming_status = "OFF"
     running = True
+    selected_weapon = 1
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
 
-    def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, mouse_delay, mouse_movement_scale, targeting_position):
+    def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, mouse_delay, mouse_movement_scale):
         if not torch.cuda.is_available():
             print("")
             print("[ERROR] CUDA not available.")
@@ -66,7 +67,6 @@ class aimbot:
         self.targeting_scale = targeting_scale
         self.mouse_delay = mouse_delay
         self.mouse_movement_scale = mouse_movement_scale
-        self.targeting_position = targeting_position
 
         self.model = torch.hub.load('lib/yolov5-master/', 'custom', path='lib/weights.pt/', source='local')
         self.model.conf = model_confidence
@@ -92,6 +92,18 @@ class aimbot:
         end = now + duration
         while now < end:
             now = get_now()
+
+    def auto_fire(self, detection):
+        if self.selected_weapon == 2:
+            if detection["x1y1"]:
+                absolute_chest = aimbot.screenshot_region["left"] + detection["chest"][0], aimbot.screenshot_region["top"] + detection["chest"][1]
+
+                distance_x, distance_y = abs(960 - absolute_chest[0]),  abs(540 - absolute_chest[1])
+
+                if distance_x < 20 and distance_y < 20:
+                    ctypes.windll.user32.mouse_event(0x0002)
+                    self.sleep(0.0001)
+                    ctypes.windll.user32.mouse_event(0x0004)
 
     @staticmethod
     def draw_on_image(image, detection):
@@ -140,15 +152,25 @@ class aimbot:
 
                 aimbot.sleep(self.mouse_delay)
 
+
     def inference(self, image):
         best_detection = {}
         start_time = time.time()
 
-        raw_results = self.model(image, 208)
+        raw_results = self.model(image, 140)
         results = raw_results.xyxy[0]
 
         if len(results) > 0:
             closest_detection = False
+
+            if self.selected_weapon == 1:
+                targeting_position = 6
+            elif self.selected_weapon == 2:
+                targeting_position = 6
+            elif self.selected_weapon == 3:
+                targeting_position = 6
+            else:
+                targeting_position = 6
 
             for x in range(len(results)):
                 x1 = int(float(results[x][0]))
@@ -158,10 +180,12 @@ class aimbot:
 
                 x1y1 = x1, y1
                 x2y2 = x2, y2
-                chest = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / self.targeting_position))
+
+                chest = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / targeting_position))
+
                 confidence = results[x][4].item()
 
-                exclusion_zone = x1 < 15
+                exclusion_zone = x1 < 10
 
                 detection_distance = abs(math.dist((208, 208), chest))
 
