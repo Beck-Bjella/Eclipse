@@ -4,6 +4,7 @@ import win32api
 import ctypes
 import cv2 as cv
 import time
+import random
 
 PUL = ctypes.POINTER(ctypes.c_ulong)
 
@@ -50,7 +51,7 @@ class aimbot:
     screenshot_region = {'left': 752, 'top': 332, 'width': 416, 'height': 416}
     aiming_status = "OFF"
     running = True
-    selected_weapon = 1
+    holding_shotgun = False
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
 
@@ -93,32 +94,20 @@ class aimbot:
         while now < end:
             now = get_now()
 
-    def auto_fire(self, detection):
-        if self.selected_weapon == 2:
-            if detection["x1y1"]:
-                absolute_chest = aimbot.screenshot_region["left"] + detection["chest"][0], aimbot.screenshot_region["top"] + detection["chest"][1]
-
-                distance_x, distance_y = abs(960 - absolute_chest[0]),  abs(540 - absolute_chest[1])
-
-                if distance_x < 20 and distance_y < 20:
-                    ctypes.windll.user32.mouse_event(0x0002)
-                    self.sleep(0.0001)
-                    ctypes.windll.user32.mouse_event(0x0004)
-
     @staticmethod
     def draw_on_image(image, detection):
         if detection["x1y1"]:
             x1y1 = detection["x1y1"]
             x2y2 = detection["x2y2"]
             x1, y1 = detection["x1y1"]
-            chest = detection["chest"]
+            head = detection["head"]
             confidence = detection["confidence"]
 
             cv.rectangle(image, x1y1, x2y2, (255, 255, 255), 2)
 
-            cv.circle(image, chest, 5, (255, 255, 255), -1)
+            cv.circle(image, head, 5, (255, 255, 255), -1)
 
-            cv.line(image, (208, 208), chest, (255, 255, 255), 2)
+            cv.line(image, (208, 208), head, (255, 255, 255), 2)
 
             confidence_text = str(int(confidence * 100)) + "%"
             cv.putText(image, text=confidence_text, org=(x1, y1 - 7), fontFace=cv.FONT_HERSHEY_SIMPLEX, fontScale=0.65, color=(255, 255, 255), thickness=2, lineType=cv.LINE_AA)
@@ -132,10 +121,26 @@ class aimbot:
 
         return image
 
+    def auto_fire(self, detection):
+        if aimbot.aiming_status == "ON":
+            if self.holding_shotgun:
+                if detection["x1y1"]:
+                    absolute_head = aimbot.screenshot_region["left"] + detection["head"][0], aimbot.screenshot_region["top"] + detection["head"][1]
+                    x1, y1 = detection["x1y1"]
+                    x2, y2 = detection["x2y2"]
+
+                    distance_x, distance_y = abs(960 - absolute_head[0]), abs(540 - absolute_head[1])
+                    detection_width = abs((x2 - x1) / 1.5)
+
+                    if distance_x < detection_width and distance_y < detection_width:
+                        ctypes.windll.user32.mouse_event(0x0002)
+                        self.sleep(random.uniform(1, 6) / 1000)
+                        ctypes.windll.user32.mouse_event(0x0004)
+
     def move_crosshair(self, detection):
         if detection["x1y1"]:
             if aimbot.aiming_status == "ON":
-                absolute_chest = aimbot.screenshot_region["left"] + detection["chest"][0], aimbot.screenshot_region["top"] + detection["chest"][1]
+                absolute_head = aimbot.screenshot_region["left"] + detection["head"][0], aimbot.screenshot_region["top"] + detection["head"][1]
 
                 right_state = win32api.GetKeyState(0x02)
                 if right_state in (-127, -128):
@@ -143,15 +148,14 @@ class aimbot:
                 else:
                     scale = self.normal_scale * self.mouse_movement_scale
 
-                rel_x = int((absolute_chest[0] - 960) * scale)
-                rel_y = int((absolute_chest[1] - 540) * scale)
+                rel_x = int((absolute_head[0] - 960) * scale)
+                rel_y = int((absolute_head[1] - 540) * scale)
 
                 aimbot.ii_.mi = MouseInput(rel_x, rel_y, 0, 0x0001, 0, ctypes.pointer(aimbot.extra))
                 input_obj = Input(ctypes.c_ulong(0), aimbot.ii_)
                 ctypes.windll.user32.SendInput(1, ctypes.byref(input_obj), ctypes.sizeof(input_obj))
 
                 aimbot.sleep(self.mouse_delay)
-
 
     def inference(self, image):
         best_detection = {}
@@ -163,15 +167,6 @@ class aimbot:
         if len(results) > 0:
             closest_detection = False
 
-            if self.selected_weapon == 1:
-                targeting_position = 6
-            elif self.selected_weapon == 2:
-                targeting_position = 6
-            elif self.selected_weapon == 3:
-                targeting_position = 6
-            else:
-                targeting_position = 6
-
             for x in range(len(results)):
                 x1 = int(float(results[x][0]))
                 y1 = int(float(results[x][1]))
@@ -181,26 +176,26 @@ class aimbot:
                 x1y1 = x1, y1
                 x2y2 = x2, y2
 
-                chest = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / targeting_position))
+                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4))
 
                 confidence = results[x][4].item()
 
-                exclusion_zone = x1 < 10
+                exclusion_zone = x1 < 15
 
-                detection_distance = abs(math.dist((208, 208), chest))
+                detection_distance = abs(math.dist((208, 208), head))
 
                 if not closest_detection:
                     closest_detection = 208
 
                 if not exclusion_zone and detection_distance < closest_detection:
                     closest_detection = detection_distance
-                    best_detection = {'x1y1': x1y1, 'x2y2': x2y2, 'chest': chest, 'confidence': confidence}
+                    best_detection = {'x1y1': x1y1, 'x2y2': x2y2, 'head': head, 'confidence': confidence}
 
         fps = int(1 / (time.time() - start_time))
 
         if best_detection:
             best_detection.update({'fps': fps})
         else:
-            best_detection.update({'x1y1': False, 'x2y2': False, 'chest': False, 'confidence': False, 'fps': fps})
+            best_detection.update({'x1y1': False, 'x2y2': False, 'head': False, 'confidence': False, 'fps': fps})
 
         return best_detection

@@ -30,11 +30,11 @@ def on_key_press(key):
 
         if 'char' in dir(key):
             if key.char == ar_hotkey:
-                aimbot.selected_weapon = 1
+                aimbot.holding_shotgun = False
             if key.char == shotgun_hotkey:
-                aimbot.selected_weapon = 2
+                aimbot.holding_shotgun = True
             if key.char == smg_hotkey:
-                aimbot.selected_weapon = 3
+                aimbot.holding_shotgun = False
     except NameError:
         pass
 
@@ -143,8 +143,8 @@ if __name__ == "__main__":
         targeting_scale = config_file["targeting_scale"]
         mouse_scale = config_file["mouse_scale"]
 
-        aimbot = aimbot(0.5, 0.45, normal_scale, targeting_scale, 0.001, mouse_scale)
-        aimbot.selected_weapon = 1
+        aimbot = aimbot(0.5, 0.01, normal_scale, targeting_scale, 0, mouse_scale)
+
         listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
         listener.start()
 
