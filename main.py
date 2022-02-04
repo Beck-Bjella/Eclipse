@@ -50,7 +50,7 @@ class eclipse_menu(tk.Tk):
         super().__init__()
 
         self.title("Eclipse")
-        self.geometry("720x360")
+        self.geometry("1000x360")
         self.resizable(False, False)
 
         eclipse_string = "___________________  ___     _____________  ___________________ \n" \
@@ -85,6 +85,10 @@ class eclipse_menu(tk.Tk):
         self.start_button = ttk.Button(text="Start", command=self.start_button_press)
         self.start_button.place(x=320, y=130)
 
+        self.auto_fire = tk.StringVar()
+        self.auto_fire_toggle = ttk.Checkbutton(text="Enable shotgun trigger bot", onvalue="enabled", offvalue="disabled", variable=self.auto_fire)
+        self.auto_fire_toggle.place(x=800, y=130)
+
         self.load_gui_data()
 
     def update_mouse_scale_slider(self, event):
@@ -104,6 +108,7 @@ class eclipse_menu(tk.Tk):
             self.mouse_scale_slider.set(mouse_scale)
         else:
             self.mouse_scale_slider.set(100)
+            self.auto_fire_toggle.setvar("disabled")
 
     def start_button_press(self):
         global run_aimbot
@@ -115,6 +120,7 @@ class eclipse_menu(tk.Tk):
         xy_sensitivity = float(self.xy_sensitivity_input.get())
         targeting_sensitivity = float(self.targeting_sensitivity_input.get())
         mouse_scale = float(self.mouse_scale)
+        auto_fire = self.auto_fire
 
         normal_scale = (10 / float(xy_sensitivity))
         targeting_scale = (10 / (float(xy_sensitivity) * ((float(targeting_sensitivity)) / 100)))
@@ -123,7 +129,8 @@ class eclipse_menu(tk.Tk):
                        "targeting_sensitivity": targeting_sensitivity,
                        "normal_scale": normal_scale,
                        "targeting_scale": targeting_scale,
-                       "mouse_scale": mouse_scale}
+                       "mouse_scale": mouse_scale,
+                       "auto_fire": auto_fire}
 
         with open('lib/config.json', 'w', encoding='utf-8') as f:
             json.dump(config_data, f, ensure_ascii=False, indent=4)
@@ -143,7 +150,7 @@ if __name__ == "__main__":
         targeting_scale = config_file["targeting_scale"]
         mouse_scale = config_file["mouse_scale"]
 
-        aimbot = aimbot(0.5, 0.01, normal_scale, targeting_scale, 0, mouse_scale)
+        aimbot = aimbot(0.5, 0.01, normal_scale, targeting_scale, 0.0001, mouse_scale)
 
         listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
         listener.start()

@@ -130,7 +130,7 @@ class aimbot:
                     x2, y2 = detection["x2y2"]
 
                     distance_x, distance_y = abs(960 - absolute_head[0]), abs(540 - absolute_head[1])
-                    detection_width = abs((x2 - x1) / 1.5)
+                    detection_width = abs((x2 - x1) / 2.5)
 
                     if distance_x < detection_width and distance_y < detection_width:
                         ctypes.windll.user32.mouse_event(0x0002)
