@@ -1,4 +1,4 @@
-## EclipseGUI
+## Eclipse
 
 Eclipse is a neural network aimbot that is designed and optimised for fortnite.
 
