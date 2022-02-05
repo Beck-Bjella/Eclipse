@@ -6,7 +6,7 @@ from pynput import keyboard
 import numpy as np
 import mss
 import cv2 as cv
-import os
+#import os
 
 
 def on_key_release(key):
