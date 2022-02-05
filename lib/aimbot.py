@@ -49,13 +49,14 @@ class POINT(ctypes.Structure):
 
 class aimbot:
     screenshot_region = {'left': 752, 'top': 332, 'width': 416, 'height': 416}
+    auto_fire_region = {'left': 15, 'right': 85, 'top': 0, 'bottom': 50}
     aiming_status = "OFF"
     running = True
     holding_shotgun = False
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
 
-    def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, mouse_delay, mouse_movement_scale):
+    def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, mouse_delay, mouse_scale, auto_fire):
         if not torch.cuda.is_available():
             print("")
             print("[ERROR] CUDA not available.")
@@ -67,7 +68,8 @@ class aimbot:
         self.normal_scale = normal_scale
         self.targeting_scale = targeting_scale
         self.mouse_delay = mouse_delay
-        self.mouse_movement_scale = mouse_movement_scale
+        self.mouse_scale = mouse_scale
+        self.auto_fire = auto_fire
 
         self.model = torch.hub.load('lib/yolov5-master/', 'custom', path='lib/weights.pt/', source='local')
         self.model.conf = model_confidence
@@ -94,18 +96,24 @@ class aimbot:
         while now < end:
             now = get_now()
 
-    @staticmethod
-    def draw_on_image(image, detection):
+    def draw_on_image(self, image, detection):
         if detection["x1y1"]:
             x1y1 = detection["x1y1"]
             x2y2 = detection["x2y2"]
             x1, y1 = detection["x1y1"]
+            x2, y2 = detection["x2y2"]
             head = detection["head"]
             confidence = detection["confidence"]
 
             cv.rectangle(image, x1y1, x2y2, (255, 255, 255), 2)
+            
+            auto_fire_x1 = int(x1 + ((x2 - x1) * (self.auto_fire_region["left"] / 100)))
+            auto_fire_x2 = int(x1 + ((x2 - x1) * (self.auto_fire_region["right"] / 100)))
+            auto_fire_y1 = int(y1 + ((y2 - y1) * (self.auto_fire_region["top"] / 100)))
+            auto_fire_y2 = int(y1 + ((y2 - y1) * (self.auto_fire_region["bottom"] / 100)))
+            cv.rectangle(image, (auto_fire_x1, auto_fire_y1), (auto_fire_x2, auto_fire_y2), (0, 0, 255), 2)
 
-            cv.circle(image, head, 5, (255, 255, 255), -1)
+            cv.circle(image, head, 6, (255, 255, 255), -1)
 
             cv.line(image, (208, 208), head, (255, 255, 255), 2)
 
@@ -121,21 +129,25 @@ class aimbot:
 
         return image
 
-    def auto_fire(self, detection):
-        if aimbot.aiming_status == "ON":
+    def shotgun_auto_fire(self, detection):
+        if self.auto_fire:
             if self.holding_shotgun:
                 if detection["x1y1"]:
-                    absolute_head = aimbot.screenshot_region["left"] + detection["head"][0], aimbot.screenshot_region["top"] + detection["head"][1]
                     x1, y1 = detection["x1y1"]
                     x2, y2 = detection["x2y2"]
+                    absolute_x1, absolute_y1 = aimbot.screenshot_region["left"] + x1, aimbot.screenshot_region["top"] + y1
+                    absolute_x2, absolute_y2 = aimbot.screenshot_region["left"] + x2, aimbot.screenshot_region["top"] + y2
 
-                    distance_x, distance_y = abs(960 - absolute_head[0]), abs(540 - absolute_head[1])
-                    detection_width = abs((x2 - x1) / 2.5)
+                    auto_fire_x1 = int(absolute_x1 + ((absolute_x2 - absolute_x1) * (self.auto_fire_region["left"] / 100)))
+                    auto_fire_x2 = int(absolute_x1 + ((absolute_x2 - absolute_x1) * (self.auto_fire_region["right"] / 100)))
+                    auto_fire_y1 = int(absolute_y1 + ((absolute_y2 - absolute_y1) * (self.auto_fire_region["top"] / 100)))
+                    auto_fire_y2 = int(absolute_y1 + ((absolute_y2 - absolute_y1) * (self.auto_fire_region["bottom"] / 100)))
 
-                    if distance_x < detection_width and distance_y < detection_width:
-                        ctypes.windll.user32.mouse_event(0x0002)
-                        self.sleep(random.uniform(1, 6) / 1000)
-                        ctypes.windll.user32.mouse_event(0x0004)
+                    if auto_fire_x1 < 960 and auto_fire_x2 > 960:
+                        if auto_fire_y1 < 540 and auto_fire_y2 > 540:
+                            ctypes.windll.user32.mouse_event(0x0002)
+                            self.sleep(random.uniform(1, 6) / 1000)
+                            ctypes.windll.user32.mouse_event(0x0004)
 
     def move_crosshair(self, detection):
         if detection["x1y1"]:
@@ -144,9 +156,9 @@ class aimbot:
 
                 right_state = win32api.GetKeyState(0x02)
                 if right_state in (-127, -128):
-                    scale = self.targeting_scale * self.mouse_movement_scale
+                    scale = self.targeting_scale * self.mouse_scale
                 else:
-                    scale = self.normal_scale * self.mouse_movement_scale
+                    scale = self.normal_scale * self.mouse_scale
 
                 rel_x = int((absolute_head[0] - 960) * scale)
                 rel_y = int((absolute_head[1] - 540) * scale)
@@ -176,7 +188,7 @@ class aimbot:
                 x1y1 = x1, y1
                 x2y2 = x2, y2
 
-                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4))
+                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4.2))
 
                 confidence = results[x][4].item()
 
