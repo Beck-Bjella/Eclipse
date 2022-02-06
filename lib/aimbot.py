@@ -49,7 +49,7 @@ class POINT(ctypes.Structure):
 
 class aimbot:
     screenshot_region = {'left': 752, 'top': 332, 'width': 416, 'height': 416}
-    auto_fire_region = {'left': 15, 'right': 85, 'top': 0, 'bottom': 50}
+    auto_fire_region = {'left': 10, 'right': 90, 'top': 0, 'bottom': 50}
     aiming_status = "OFF"
     running = True
     holding_shotgun = False

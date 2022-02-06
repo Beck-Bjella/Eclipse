@@ -33,30 +33,32 @@ def on_key_press(key):
 
         if 'char' in dir(key):
             if key.char == slot_1_hotkey:
-                if shotgun_slot == 1:
+                aimbot.holding_shotgun = False
+            if key.char == slot_2_hotkey:
+                aimbot.holding_shotgun = False
+            if key.char == slot_3_hotkey:
+                aimbot.holding_shotgun = False
+            if key.char == slot_4_hotkey:
+                aimbot.holding_shotgun = False
+            if key.char == slot_5_hotkey:
+                aimbot.holding_shotgun = False
+
+            if shotgun_slot == 1:
+                if key.char == slot_1_hotkey:
                     aimbot.holding_shotgun = True
-                else:
-                    aimbot.holding_shotgun = False
-            elif key.char == slot_2_hotkey:
-                if shotgun_slot == 2:
+            if shotgun_slot == 2:
+                if key.char == slot_2_hotkey:
                     aimbot.holding_shotgun = True
-                else:
-                    aimbot.holding_shotgun = False
-            elif key.char == slot_3_hotkey:
-                if shotgun_slot == 3:
+            if shotgun_slot == 3:
+                if key.char == slot_3_hotkey:
                     aimbot.holding_shotgun = True
-                else:
-                    aimbot.holding_shotgun = False
-            elif key.char == slot_4_hotkey:
-                if shotgun_slot == 4:
+            if shotgun_slot == 4:
+                if key.char == slot_4_hotkey:
                     aimbot.holding_shotgun = True
-                else:
-                    aimbot.holding_shotgun = False
-            elif key.char == slot_5_hotkey:
-                if shotgun_slot == 5:
+            if shotgun_slot == 5:
+                if key.char == slot_5_hotkey:
                     aimbot.holding_shotgun = True
-                else:
-                    aimbot.holding_shotgun = False
+
     except NameError:
         pass
 
@@ -200,7 +202,7 @@ if __name__ == "__main__":
 
     if run_aimbot:
         config_file = get_config_file()
-        aimbot = aimbot(0.45, 0.01, config_file["normal_scale"], config_file["targeting_scale"], 0.0001, config_file["mouse_scale"], config_file["auto_fire"])
+        aimbot = aimbot(0.3, 0.01, config_file["normal_scale"], config_file["targeting_scale"], 0.0001, config_file["mouse_scale"], config_file["auto_fire"])
 
         slot_1_hotkey = config_file["slot_1_hotkey"]
         slot_2_hotkey = config_file["slot_2_hotkey"]
