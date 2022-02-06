@@ -4,7 +4,7 @@
     "normal_scale": 0.6578947368421053,
     "targeting_scale": 1.3157894736842106,
     "mouse_scale": 0.86,
-    "auto_fire": false,
+    "auto_fire": true,
     "slot_1_hotkey": "1",
     "slot_2_hotkey": "2",
     "slot_3_hotkey": "3",
