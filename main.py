@@ -58,7 +58,6 @@ def on_key_press(key):
             if shotgun_slot == 5:
                 if key.char == slot_5_hotkey:
                     aimbot.holding_shotgun = True
-
     except NameError:
         pass
 
