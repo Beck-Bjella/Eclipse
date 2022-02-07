@@ -49,7 +49,7 @@ class POINT(ctypes.Structure):
 
 class aimbot:
     screenshot_region = {'left': 752, 'top': 332, 'width': 416, 'height': 416}
-    auto_fire_region = {'left': 10, 'right': 90, 'top': 0, 'bottom': 50}
+    auto_fire_region = {'left': 20, 'right': 80, 'top': 0, 'bottom': 30}
     aiming_status = "OFF"
     running = True
     holding_shotgun = False
@@ -131,23 +131,24 @@ class aimbot:
 
     def shotgun_auto_fire(self, detection):
         if self.auto_fire:
-            if self.holding_shotgun:
-                if detection["x1y1"]:
-                    x1, y1 = detection["x1y1"]
-                    x2, y2 = detection["x2y2"]
-                    absolute_x1, absolute_y1 = aimbot.screenshot_region["left"] + x1, aimbot.screenshot_region["top"] + y1
-                    absolute_x2, absolute_y2 = aimbot.screenshot_region["left"] + x2, aimbot.screenshot_region["top"] + y2
+            if self.aiming_status == "ON":
+                if self.holding_shotgun:
+                    if detection["x1y1"]:
+                        x1, y1 = detection["x1y1"]
+                        x2, y2 = detection["x2y2"]
+                        absolute_x1, absolute_y1 = aimbot.screenshot_region["left"] + x1, aimbot.screenshot_region["top"] + y1
+                        absolute_x2, absolute_y2 = aimbot.screenshot_region["left"] + x2, aimbot.screenshot_region["top"] + y2
 
-                    auto_fire_x1 = int(absolute_x1 + ((absolute_x2 - absolute_x1) * (self.auto_fire_region["left"] / 100)))
-                    auto_fire_x2 = int(absolute_x1 + ((absolute_x2 - absolute_x1) * (self.auto_fire_region["right"] / 100)))
-                    auto_fire_y1 = int(absolute_y1 + ((absolute_y2 - absolute_y1) * (self.auto_fire_region["top"] / 100)))
-                    auto_fire_y2 = int(absolute_y1 + ((absolute_y2 - absolute_y1) * (self.auto_fire_region["bottom"] / 100)))
+                        auto_fire_x1 = int(absolute_x1 + ((absolute_x2 - absolute_x1) * (self.auto_fire_region["left"] / 100)))
+                        auto_fire_x2 = int(absolute_x1 + ((absolute_x2 - absolute_x1) * (self.auto_fire_region["right"] / 100)))
+                        auto_fire_y1 = int(absolute_y1 + ((absolute_y2 - absolute_y1) * (self.auto_fire_region["top"] / 100)))
+                        auto_fire_y2 = int(absolute_y1 + ((absolute_y2 - absolute_y1) * (self.auto_fire_region["bottom"] / 100)))
 
-                    if auto_fire_x1 < 960 and auto_fire_x2 > 960:
-                        if auto_fire_y1 < 540 and auto_fire_y2 > 540:
-                            ctypes.windll.user32.mouse_event(0x0002)
-                            self.sleep(random.uniform(1, 6) / 1000)
-                            ctypes.windll.user32.mouse_event(0x0004)
+                        if auto_fire_x1 < 960 and auto_fire_x2 > 960:
+                            if auto_fire_y1 < 540 and auto_fire_y2 > 540:
+                                ctypes.windll.user32.mouse_event(0x0002)
+                                self.sleep(random.uniform(1, 6) / 1000)
+                                ctypes.windll.user32.mouse_event(0x0004)
 
     def move_crosshair(self, detection):
         if detection["x1y1"]:

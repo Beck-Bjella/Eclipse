@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
     if run_aimbot:
         config_file = get_config_file()
-        aimbot = aimbot(0.3, 0.01, config_file["normal_scale"], config_file["targeting_scale"], 0.0001, config_file["mouse_scale"], config_file["auto_fire"])
+        aimbot = aimbot(0.5, 0.01, config_file["normal_scale"], config_file["targeting_scale"], 0.0001, config_file["mouse_scale"], config_file["auto_fire"])
 
         slot_1_hotkey = config_file["slot_1_hotkey"]
         slot_2_hotkey = config_file["slot_2_hotkey"]
