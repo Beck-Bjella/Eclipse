@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee45204f-02fd-4b67-a779-da9329454b50" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/aimbot.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/aimbot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/config.json" beforeDir="false" afterPath="$PROJECT_DIR$/lib/config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/config.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,7 +32,16 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/main.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Frc-Ball-Tracking" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\beckb\Documents\GitHub\EclipseGUI\lib" />
+      <recent name="C:\Users\beckb\Documents\GitHub\EclipseGUI\lib\yolov5-master" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\beckb\Documents\GitHub\EclipseGUI\lib" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python">
