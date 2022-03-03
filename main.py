@@ -12,7 +12,7 @@ import os
 
 def on_key_release(key):
     try:
-        if key == keyboard.Key.f1:
+        if key == keyboard.Key.f7:
             aimbot.update_aimimg_status("OFF")
         if key == keyboard.Key.f3:
             aimbot.running = False
@@ -29,7 +29,7 @@ def on_key_press(key):
     global shotgun_slot
 
     try:
-        if key == keyboard.Key.f1:
+        if key == keyboard.Key.f7:
             aimbot.update_aimimg_status("ON")
 
         if 'char' in dir(key):
@@ -146,18 +146,32 @@ if __name__ == "__main__":
 
     if run_aimbot:
         config_file = get_config_file()
-        aimbot = aimbot(0.5, 1, config_file["normal_scale"], config_file["targeting_scale"], 0.0001)
+        aimbot = aimbot(0.4, 1, config_file["normal_scale"], config_file["targeting_scale"], 40, 1)
 
         listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
         listener.start()
 
+        running_average = 0
+
+        # for x in range(100):
         while aimbot.running:
+            start_time = time.time()
+
             screenshot = np.array(mss.mss().grab(aimbot.screenshot_region))
 
-            results = aimbot.main(screenshot)
+            detection = aimbot.inference(screenshot)
+
+            if aimbot.aiming_status == "ON":
+                aimbot.move_crosshair(detection)
+
+            results = aimbot.draw_on_image(screenshot, detection)
 
             cv.imshow("Eclipse", results)
+
+            running_average = (running_average + (time.time() - start_time)) / 2
 
             if cv.waitKey(1) == ord('q'):
                 cv.destroyAllWindows()
                 break
+
+        print("Time per Frame:", int(running_average * 1000), "milliseconds")
