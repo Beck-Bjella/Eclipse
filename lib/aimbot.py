@@ -1,13 +1,9 @@
 import math
-
 import torch
 import win32api
 import ctypes
 import cv2 as cv
 import time
-from pynput.mouse import Controller
-
-mouse = Controller()
 
 PUL = ctypes.POINTER(ctypes.c_ulong)
 
@@ -69,7 +65,6 @@ class aimbot:
         self.normal_scale = normal_scale
         self.targeting_scale = targeting_scale
         self.movement_size = movement_size
-        self.movement_steps = movement_steps
 
         self.model = torch.hub.load('lib/yolov5-master/', 'custom', path='lib/weights.pt/', source='local')
         self.model.conf = model_confidence
@@ -137,13 +132,12 @@ class aimbot:
             if length < temp_movement_size:
                 temp_movement_size = length
 
-            rel_x = int((((diff_x / length) * temp_movement_size) / self.movement_steps) * scale)
-            rel_y = int((((diff_y / length) * temp_movement_size) / self.movement_steps) * scale)
+            rel_x = int(((diff_x / length) * temp_movement_size) * scale)
+            rel_y = int(((diff_y / length) * temp_movement_size) * scale)
 
-            for x in range(self.movement_steps):
-                aimbot.ii_.mi = MouseInput(rel_x, rel_y, 0, 0x0001, 0, ctypes.pointer(aimbot.extra))
-                input_obj = Input(ctypes.c_ulong(0), aimbot.ii_)
-                ctypes.windll.user32.SendInput(1, ctypes.byref(input_obj), ctypes.sizeof(input_obj))
+            aimbot.ii_.mi = MouseInput(rel_x, rel_y, 0, 0x0001, 0, ctypes.pointer(aimbot.extra))
+            input_obj = Input(ctypes.c_ulong(0), aimbot.ii_)
+            ctypes.windll.user32.SendInput(1, ctypes.byref(input_obj), ctypes.sizeof(input_obj))
 
     def inference(self, image):
         best_detection = {}

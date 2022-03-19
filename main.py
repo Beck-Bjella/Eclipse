@@ -21,44 +21,9 @@ def on_key_release(key):
 
 
 def on_key_press(key):
-    global slot_1_hotkey
-    global slot_2_hotkey
-    global slot_3_hotkey
-    global slot_4_hotkey
-    global slot_5_hotkey
-    global shotgun_slot
-
     try:
         if key == keyboard.Key.f7:
             aimbot.update_aimimg_status("ON")
-
-        if 'char' in dir(key):
-            if key.char == slot_1_hotkey:
-                aimbot.holding_shotgun = False
-            if key.char == slot_2_hotkey:
-                aimbot.holding_shotgun = False
-            if key.char == slot_3_hotkey:
-                aimbot.holding_shotgun = False
-            if key.char == slot_4_hotkey:
-                aimbot.holding_shotgun = False
-            if key.char == slot_5_hotkey:
-                aimbot.holding_shotgun = False
-
-            if shotgun_slot == 1:
-                if key.char == slot_1_hotkey:
-                    aimbot.holding_shotgun = True
-            if shotgun_slot == 2:
-                if key.char == slot_2_hotkey:
-                    aimbot.holding_shotgun = True
-            if shotgun_slot == 3:
-                if key.char == slot_3_hotkey:
-                    aimbot.holding_shotgun = True
-            if shotgun_slot == 4:
-                if key.char == slot_4_hotkey:
-                    aimbot.holding_shotgun = True
-            if shotgun_slot == 5:
-                if key.char == slot_5_hotkey:
-                    aimbot.holding_shotgun = True
     except NameError:
         pass
 
@@ -152,8 +117,6 @@ if __name__ == "__main__":
         listener.start()
 
         running_average = 0
-
-        # for x in range(100):
         while aimbot.running:
             start_time = time.time()
 
