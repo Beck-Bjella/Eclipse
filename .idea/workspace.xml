@@ -5,13 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee45204f-02fd-4b67-a779-da9329454b50" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/lib/aimbot.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/aimbot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/aimbot.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Aimbot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/config.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -42,8 +51,8 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\beckb\Documents\GitHub\EclipseGUI" />
       <recent name="C:\Users\beckb\Documents\GitHub\EclipseGUI\lib" />
+      <recent name="C:\Users\beckb\Documents\GitHub\EclipseGUI" />
       <recent name="C:\Users\beckb\Documents\GitHub\EclipseGUI\lib\yolov5-master" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -63,7 +72,7 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\beckb\Documents\GitHub\EclipseGUI\Main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
