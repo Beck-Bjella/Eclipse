@@ -1,4 +1,4 @@
-import time
+﻿import time
 import numpy as np
 import mss
 from lib.Aimbot import Aimbot
@@ -110,15 +110,15 @@ class eclipse_menu(tk.Tk):
 
 
 if __name__ == "__main__":
-    run_aimbot = False
+    run_aimbot = True
 
-    app = eclipse_menu()
-    app.mainloop()
+    # app = eclipse_menu()
+    # app.mainloop()
 
     if run_aimbot:
 
         config_file = get_config_file()
-        aimbot = Aimbot(0.3, 0.9, config_file["normal_scale"], config_file["targeting_scale"], config_file["fps"])
+        aimbot = Aimbot(0.6, 1, config_file["normal_scale"], config_file["targeting_scale"], config_file["fps"])
 
         listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
         listener.start()
@@ -129,11 +129,9 @@ if __name__ == "__main__":
 
             detection = aimbot.inference(screenshot)
 
-            aimbot.update_frame_average(start_time, time.time())
-
-            print(aimbot.is_targeting())
-
             if aimbot.aiming_status == "ON":
                 aimbot.move_crosshair(detection)
 
-            # print(aimbot.running_frame_average)
+            # print(time.time() - start_time)
+
+        print("DONE")

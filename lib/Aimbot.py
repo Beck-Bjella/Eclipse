@@ -1,10 +1,9 @@
 import math
+
 import torch
 import ctypes
 import time
 import win32api
-import numpy as np
-import mss
 
 PUL = ctypes.POINTER(ctypes.c_ulong)
 
@@ -53,7 +52,6 @@ class Aimbot:
     running = True
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
-    running_frame_average = 0
 
     def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, fps):
         if not torch.cuda.is_available():
@@ -72,9 +70,6 @@ class Aimbot:
         self.model.conf = model_confidence
         self.model.iou = model_iou
         self.model.classes = [0]
-
-    def update_frame_average(self, start_time, end_time):
-        self.running_frame_average = (self.running_frame_average + (end_time - start_time)) / 2
 
     def update_aimimg_status(self, updated_value):
         if updated_value == "toggle":
@@ -95,15 +90,12 @@ class Aimbot:
         while now < end:
             now = get_now()
 
-    @staticmethod
-    def is_targeting():
-        return True if win32api.GetKeyState(0x02) in (-127, -128) else False
-
     def move_crosshair(self, detection):
         if detection["x1y1"]:
             absolute_head = self.screenshot_region["left"] + detection["head"][0], self.screenshot_region["top"] + detection["head"][1]
 
             right_state = win32api.GetKeyState(0x02)
+            print(right_state)
             if right_state in (-127, -128):
                 scale = self.targeting_scale
             else:
@@ -119,16 +111,16 @@ class Aimbot:
             input_obj = Input(ctypes.c_ulong(0), self.ii_)
             ctypes.windll.user32.SendInput(1, ctypes.byref(input_obj), ctypes.sizeof(input_obj))
 
-            self.sleep(((1000 / self.fps) / 1000) + 0.002)
+            self.sleep(((1000 / self.fps) / 1000) + 0.005)
 
     def inference(self, image):
         best_detection = {}
 
-        raw_results = self.model(image, 140)
+        raw_results = self.model(image, 416)
         results = raw_results.xyxy[0]
 
         if len(results) > 0:
-            closest_detection = 0
+            closest_detection = 10000
 
             for x in range(len(results)):
                 x1 = int(float(results[x][0]))
@@ -139,15 +131,15 @@ class Aimbot:
                 x1y1 = x1, y1
                 x2y2 = x2, y2
 
-                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4))
+                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4.2))
 
                 confidence = results[x][4].item()
 
                 exclusion_zone = x1 < 15
 
-                detection_distance = ((y2 - y1) * 2) + ((x2 - x1) * 2)
+                detection_distance = math.dist((208, 208), (head[0], head[1]))
 
-                if not exclusion_zone and detection_distance > closest_detection:
+                if not exclusion_zone and detection_distance < closest_detection:
                     closest_detection = detection_distance
                     best_detection = {'x1y1': x1y1, 'x2y2': x2y2, 'head': head, 'confidence': confidence}
 
