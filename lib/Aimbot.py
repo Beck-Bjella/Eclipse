@@ -1,5 +1,4 @@
 import math
-
 import torch
 import ctypes
 import time
@@ -54,12 +53,13 @@ class Aimbot:
     ii_ = Input_I()
 
     def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, fps):
+        self.running_frame_time = 0
+
         if not torch.cuda.is_available():
-            print("")
             print("[ERROR] CUDA not available.")
             print("")
             print("Quitting...")
-            time.sleep(2)
+            time.sleep(3)
             exit()
 
         self.normal_scale = normal_scale
@@ -70,6 +70,9 @@ class Aimbot:
         self.model.conf = model_confidence
         self.model.iou = model_iou
         self.model.classes = [0]
+
+    def update_running_frame_time(self, start_time, end_time):
+        self.running_frame_time = (self.running_frame_time + (end_time - start_time)) / 2
 
     def update_aimimg_status(self, updated_value):
         if updated_value == "toggle":
@@ -95,7 +98,6 @@ class Aimbot:
             absolute_head = self.screenshot_region["left"] + detection["head"][0], self.screenshot_region["top"] + detection["head"][1]
 
             right_state = win32api.GetKeyState(0x02)
-            print(right_state)
             if right_state in (-127, -128):
                 scale = self.targeting_scale
             else:
@@ -110,6 +112,11 @@ class Aimbot:
             self.ii_.mi = MouseInput(rel_x, rel_y, 0, 0x0001, 0, ctypes.pointer(self.extra))
             input_obj = Input(ctypes.c_ulong(0), self.ii_)
             ctypes.windll.user32.SendInput(1, ctypes.byref(input_obj), ctypes.sizeof(input_obj))
+
+            #  needs work getting correct
+            #
+            # + self.running_frame_time
+            #  + 0.005
 
             self.sleep(((1000 / self.fps) / 1000) + 0.005)
 

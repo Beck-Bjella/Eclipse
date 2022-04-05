@@ -2,10 +2,9 @@
 import numpy as np
 import mss
 from lib.Aimbot import Aimbot
-import tkinter as tk
-from tkinter import ttk
 import json
 from pynput import keyboard
+import pyfiglet
 import os
 
 
@@ -33,92 +32,127 @@ def get_config_file():
     return config_data
 
 
-class eclipse_menu(tk.Tk):
-    def __init__(self):
-        super().__init__()
+def create_config_file():
+    if os.path.isfile("lib/config.json"):
+        os.remove("lib/config.json")
 
-        self.title("Eclipse")
-        self.geometry("720x360")
-        self.resizable(False, False)
+    xy_sensitivity = None
+    targeting_sensitivity = None
+    fps = None
 
-        eclipse_string = "___________________  ___     _____________  ___________________ \n" \
-                         "\_   _____/_   ___ \|   |   |   |______   \/   _____/_   _____/ \n" \
-                         " |    __)_/    \  \/|   |   |   ||     ___/\_____  \ |    __)_  \n" \
-                         " |        \     \____   |___|   ||    |    /        \|        \ \n" \
-                         "/_______  /\______  /______ \___||____|   /_______  /_______  / \n" \
-                         "        \/        \/       \/                     \/        \/  \n"
+    valid_input_1 = False
+    while not valid_input_1:
+        xy_sensitivity = input("Please input your in-game X sensitivity: ")
 
-        eclipse_text = tk.Label(self, text=eclipse_string, font=("Courier", 8))
-        eclipse_text.place(x=135, y=0)
+        try:
+            xy_sensitivity = float(xy_sensitivity)
+            valid_input_1 = True
+        except ValueError:
+            print("[ERROR] Invalid input")
+        print("")
 
-        self.xy_sensitivity_input = ttk.Entry(self)
-        self.xy_sensitivity_input.place(x=85, y=130)
-        xy_sensitivity_label = ttk.Label(self, text="XY Sensitivity")
-        xy_sensitivity_label.place(x=85, y=110)
+    valid_input_2 = False
+    while not valid_input_2:
+        targeting_sensitivity = input("Please input your in-game targeting sensitivity: ")
 
-        self.targeting_sensitivity_input = ttk.Entry(self)
-        self.targeting_sensitivity_input.place(x=500, y=130)
-        targeting_sensitivity_label = ttk.Label(self, text="Targeting Sensitivity")
-        targeting_sensitivity_label.place(x=500, y=110)
+        try:
+            targeting_sensitivity = float(targeting_sensitivity)
+            valid_input_2 = True
+        except ValueError:
+            print("[ERROR] Invalid input")
+        print("")
 
-        self.fps_input = ttk.Entry(self)
-        self.fps_input.place(x=320, y=250)
-        fps_label = ttk.Label(self, text="FPS")
-        fps_label.place(x=320, y=230)
+    valid_input_3 = False
+    while not valid_input_3:
+        fps = input("Please input the average fps of your game: ")
 
-        self.start_button = ttk.Button(text="Start", command=self.start_button_press)
-        self.start_button.place(x=320, y=130)
+        try:
+            fps = float(fps)
+            valid_input_3 = True
+        except ValueError:
+            print("[ERROR] Invalid input")
+        print("")
 
-        self.load_gui_data()
+    normal_scale = float(11 / xy_sensitivity)
+    targeting_scale = float(11 / (xy_sensitivity * (targeting_sensitivity / 100)))
 
-    def load_gui_data(self):
-        if os.path.isfile("lib/config.json"):
-            config_data = get_config_file()
+    config_data = {"xy_sensitivity": xy_sensitivity,
+                   "targeting_sensitivity": targeting_sensitivity,
+                   "fps": fps,
+                   "normal_scale": normal_scale,
+                   "targeting_scale": targeting_scale}
 
-            xy_sensitivity = config_data["xy_sensitivity"]
-            targeting_sensitivity = config_data["targeting_sensitivity"]
-            fps = config_data["fps"]
-
-            self.xy_sensitivity_input.insert(0, xy_sensitivity)
-            self.targeting_sensitivity_input.insert(0, targeting_sensitivity)
-            self.fps_input.insert(0, fps)
-
-    def start_button_press(self):
-        global run_aimbot
-        run_aimbot = True
-
-        if os.path.isfile("lib/config.json"):
-            os.remove("lib/config.json")
-
-        xy_sensitivity = float(self.xy_sensitivity_input.get())
-        targeting_sensitivity = float(self.targeting_sensitivity_input.get())
-        fps = float(self.fps_input.get())
-
-        normal_scale = float(11 / float(xy_sensitivity))
-        targeting_scale = float(11 / (float(xy_sensitivity) * ((float(targeting_sensitivity)) / 100)))
-
-        config_data = {"xy_sensitivity": xy_sensitivity,
-                       "targeting_sensitivity": targeting_sensitivity,
-                       "fps": fps,
-                       "normal_scale": normal_scale,
-                       "targeting_scale": targeting_scale}
-
-        with open('lib/config.json', 'w', encoding='utf-8') as f:
-            json.dump(config_data, f, ensure_ascii=False, indent=4)
-
-        self.destroy()
+    with open('lib/config.json', 'w', encoding='utf-8') as f:
+        json.dump(config_data, f, ensure_ascii=False, indent=4)
 
 
 if __name__ == "__main__":
-    run_aimbot = True
+    eclipse_string = pyfiglet.figlet_format("ECLIPSE", "Graffiti")
+    print(eclipse_string, "                   (Neural Network Aimbot)")
+    print("")
 
-    # app = eclipse_menu()
-    # app.mainloop()
+    print("[1] Type 'R' to run the aimbot")
+    print("[2] Type 'E' to edit/create a configuration file")
+    print("[3] Type 'Q' to quit the program")
+    print("")
 
-    if run_aimbot:
+    option = None
+
+    valid_input = False
+    while not valid_input:
+        option = input("Please select a option: ")
+
+        if option == "Q" or option == "E" or option == "R":
+            valid_input = True
+        else:
+            print("[ERROR] Invalid input")
+        print("")
+
+    print("----------------------------------------")
+    print("")
+
+    if option == "Q" or option is None:
+        print("Quitting... ")
+        time.sleep(4)
+        quit()
+    elif option == "E":
+        create_config_file()
+
+        print("----------------------------------------")
+        print("")
+        print("[INFO] Configuration file successfully created.")
+        print("")
+        print("----------------------------------------")
+        print("")
+        print("Quitting...")
+        time.sleep(4)
+        exit()
+    elif option == "R":
+        if not os.path.isfile("lib/config.json"):
+            print("[ERROR] Must have a configuration file to run the aimbot")
+            print("")
+            create_config_file()
+
+            print("----------------------------------------")
+            print("")
+            print("[INFO] Configuration file successfully created.")
+            print("")
+            print("----------------------------------------")
+            print("")
+
+        print("[INFO] Loading neural network model")
 
         config_file = get_config_file()
         aimbot = Aimbot(0.6, 1, config_file["normal_scale"], config_file["targeting_scale"], config_file["fps"])
+        print("")
+
+        print("----------------------------------------")
+        print("")
+        print("[INFO] Aimbot successfully activated")
+        print("")
+        print("[1] Hold f1 to enable the aimbot")
+        print("[2] Press f3 to quit")
+        print("")
 
         listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
         listener.start()
@@ -129,9 +163,13 @@ if __name__ == "__main__":
 
             detection = aimbot.inference(screenshot)
 
+            aimbot.update_running_frame_time(start_time, time.time())
+
             if aimbot.aiming_status == "ON":
                 aimbot.move_crosshair(detection)
 
-            # print(time.time() - start_time)
-
-        print("DONE")
+        print("----------------------------------------")
+        print("")
+        print("Quitting...")
+        time.sleep(4)
+        exit()

@@ -4,7 +4,7 @@ Eclipse is a neural network aimbot that is designed and optimised for fortnite.
 
 ## Installation
 
-1. Install a version of python 3.8 or later. Python 3.8.6 is recomended.
+1. Install a version of python 3.8 or later. Python 3.8.6 is recommended.
 
 2. Download the code from my github [repository](https://github.com/Beck-Bjella/Eclipse/), and extract it.
 
