@@ -56,7 +56,7 @@ class Aimbot:
         self.running_frame_time = 0
 
         if not torch.cuda.is_available():
-            print("[ERROR] CUDA not available.")
+            print("[!] CUDA not available.")
             print("")
             print("Quitting...")
             time.sleep(3)
@@ -118,7 +118,7 @@ class Aimbot:
             # + self.running_frame_time
             #  + 0.005
 
-            self.sleep(((1000 / self.fps) / 1000) + 0.005)
+            self.sleep(((1000 / self.fps) / 1000) + 0.002)
 
     def inference(self, image):
         best_detection = {}
@@ -138,7 +138,7 @@ class Aimbot:
                 x1y1 = x1, y1
                 x2y2 = x2, y2
 
-                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4.2))
+                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4.35))
 
                 confidence = results[x][4].item()
 

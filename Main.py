@@ -48,7 +48,7 @@ def create_config_file():
             xy_sensitivity = float(xy_sensitivity)
             valid_input_1 = True
         except ValueError:
-            print("[ERROR] Invalid input")
+            print("[!] Invalid input")
         print("")
 
     valid_input_2 = False
@@ -59,7 +59,7 @@ def create_config_file():
             targeting_sensitivity = float(targeting_sensitivity)
             valid_input_2 = True
         except ValueError:
-            print("[ERROR] Invalid input")
+            print("[!] Invalid input")
         print("")
 
     valid_input_3 = False
@@ -70,7 +70,7 @@ def create_config_file():
             fps = float(fps)
             valid_input_3 = True
         except ValueError:
-            print("[ERROR] Invalid input")
+            print("[!] Invalid input")
         print("")
 
     normal_scale = float(11 / xy_sensitivity)
@@ -105,7 +105,7 @@ if __name__ == "__main__":
         if option == "Q" or option == "E" or option == "R":
             valid_input = True
         else:
-            print("[ERROR] Invalid input")
+            print("[!] Invalid input")
         print("")
 
     print("----------------------------------------")
@@ -113,7 +113,7 @@ if __name__ == "__main__":
 
     if option == "Q" or option is None:
         print("Quitting... ")
-        time.sleep(4)
+        time.sleep(3)
         quit()
     elif option == "E":
         create_config_file()
@@ -125,11 +125,11 @@ if __name__ == "__main__":
         print("----------------------------------------")
         print("")
         print("Quitting...")
-        time.sleep(4)
+        time.sleep(3)
         exit()
     elif option == "R":
         if not os.path.isfile("lib/config.json"):
-            print("[ERROR] Must have a configuration file to run the aimbot")
+            print("[!] Must have a configuration file to run the aimbot")
             print("")
             create_config_file()
 
@@ -143,7 +143,7 @@ if __name__ == "__main__":
         print("[INFO] Loading neural network model")
 
         config_file = get_config_file()
-        aimbot = Aimbot(0.6, 1, config_file["normal_scale"], config_file["targeting_scale"], config_file["fps"])
+        aimbot = Aimbot(0.7, 1, config_file["normal_scale"], config_file["targeting_scale"], config_file["fps"])
         print("")
 
         print("----------------------------------------")
@@ -171,5 +171,5 @@ if __name__ == "__main__":
         print("----------------------------------------")
         print("")
         print("Quitting...")
-        time.sleep(4)
+        time.sleep(3)
         exit()
