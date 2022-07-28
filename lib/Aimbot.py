@@ -2,7 +2,9 @@ import math
 import torch
 import ctypes
 import time
-import win32api
+import win32gui, win32ui, win32con, win32api
+import numpy as np
+
 
 PUL = ctypes.POINTER(ctypes.c_ulong)
 
@@ -69,7 +71,6 @@ class Aimbot:
         self.model = torch.hub.load('lib/yolov5-master/', 'custom', path='lib/weights.pt/', source='local')
         self.model.conf = model_confidence
         self.model.iou = model_iou
-        self.model.classes = [0]
 
     def update_running_frame_time(self, start_time, end_time):
         self.running_frame_time = (self.running_frame_time + (end_time - start_time)) / 2
@@ -118,12 +119,12 @@ class Aimbot:
             # + self.running_frame_time
             #  + 0.005
 
-            self.sleep(((1000 / self.fps) / 1000) + 0.002)
+            self.sleep(1 / (self.fps / 2))
 
     def inference(self, image):
         best_detection = {}
 
-        raw_results = self.model(image, 416)
+        raw_results = self.model(image)
         results = raw_results.xyxy[0]
 
         if len(results) > 0:
@@ -138,7 +139,7 @@ class Aimbot:
                 x1y1 = x1, y1
                 x2y2 = x2, y2
 
-                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4.35))
+                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 3.9))
 
                 confidence = results[x][4].item()
 

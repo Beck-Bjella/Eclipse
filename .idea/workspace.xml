@@ -7,6 +7,7 @@
     <list default="true" id="ee45204f-02fd-4b67-a779-da9329454b50" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/Aimbot.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Aimbot.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,10 +47,11 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../GygesBot" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\beckb\Documents\GitHub\Eclipse\lib" />
       <recent name="C:\Users\beckb\Documents\GitHub\EclipseGUI\lib" />
       <recent name="C:\Users\beckb\Documents\GitHub\EclipseGUI" />
       <recent name="C:\Users\beckb\Documents\GitHub\EclipseGUI\lib\yolov5-master" />

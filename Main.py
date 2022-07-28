@@ -6,6 +6,7 @@ import json
 from pynput import keyboard
 import pyfiglet
 import os
+import cv2
 
 
 def on_key_release(key):
@@ -143,7 +144,7 @@ if __name__ == "__main__":
         print("[INFO] Loading neural network model")
 
         config_file = get_config_file()
-        aimbot = Aimbot(0.7, 1, config_file["normal_scale"], config_file["targeting_scale"], config_file["fps"])
+        aimbot = Aimbot(0.74, 1, config_file["normal_scale"], config_file["targeting_scale"], config_file["fps"])
         print("")
 
         print("----------------------------------------")
@@ -157,8 +158,10 @@ if __name__ == "__main__":
         listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
         listener.start()
 
+        frame_count = 0
+        start_time = time.time()
+
         while aimbot.running:
-            start_time = time.time()
             screenshot = np.array(mss.mss().grab(aimbot.screenshot_region))
 
             detection = aimbot.inference(screenshot)
