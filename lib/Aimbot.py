@@ -1,10 +1,13 @@
-import math
-import torch
 import ctypes
-import time
-import win32gui, win32ui, win32con, win32api
+import cv2
+import math
 import numpy as np
-
+import time
+import torch
+import win32api
+import win32con
+import win32gui
+import win32ui
 
 PUL = ctypes.POINTER(ctypes.c_ulong)
 
@@ -68,7 +71,7 @@ class Aimbot:
         self.targeting_scale = targeting_scale
         self.fps = fps
 
-        self.model = torch.hub.load('lib/yolov5-master/', 'custom', path='lib/weights.pt/', source='local')
+        self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='lib/weights.pt/', force_reload=True)
         self.model.conf = model_confidence
         self.model.iou = model_iou
 
@@ -87,8 +90,6 @@ class Aimbot:
     @staticmethod
     def sleep(duration):
         get_now = time.perf_counter
-        if duration == 0:
-            return
         now = get_now()
         end = now + duration
         while now < end:
@@ -114,14 +115,40 @@ class Aimbot:
             input_obj = Input(ctypes.c_ulong(0), self.ii_)
             ctypes.windll.user32.SendInput(1, ctypes.byref(input_obj), ctypes.sizeof(input_obj))
 
-            #  needs work getting correct
-            #
-            # + self.running_frame_time
-            #  + 0.005
+    def inference_conf(self, image):
+        best_detection = {}
 
-            self.sleep(1 / (self.fps / 2))
+        raw_results = self.model(image)
+        results = raw_results.xyxy[0]
 
-    def inference(self, image):
+        if len(results) > 0:
+            highest_confidence = 0
+
+            for x in range(len(results)):
+                x1 = int(float(results[x][0]))
+                y1 = int(float(results[x][1]))
+                x2 = int(float(results[x][2]))
+                y2 = int(float(results[x][3]))
+
+                x1y1 = x1, y1
+                x2y2 = x2, y2
+
+                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 3))
+
+                confidence = results[x][4].item()
+
+                exclusion_zone = x1 < 40
+
+                if not exclusion_zone and confidence > highest_confidence:
+                    highest_confidence = confidence
+                    best_detection = {'x1y1': x1y1, 'x2y2': x2y2, 'head': head, 'confidence': confidence}
+
+        if not best_detection:
+            best_detection.update({'x1y1': False, 'x2y2': False, 'head': False, 'confidence': False, 'distance': False})
+
+        return best_detection
+
+    def inference_dist(self, image):
         best_detection = {}
 
         raw_results = self.model(image)
@@ -139,21 +166,19 @@ class Aimbot:
                 x1y1 = x1, y1
                 x2y2 = x2, y2
 
-                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 3.9))
+                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4.1))
 
                 confidence = results[x][4].item()
 
-                exclusion_zone = x1 < 15
+                exclusion_zone = x1 < 40
 
                 detection_distance = math.dist((208, 208), (head[0], head[1]))
 
                 if not exclusion_zone and detection_distance < closest_detection:
                     closest_detection = detection_distance
-                    best_detection = {'x1y1': x1y1, 'x2y2': x2y2, 'head': head, 'confidence': confidence}
+                    best_detection = {'x1y1': x1y1, 'x2y2': x2y2, 'head': head, 'confidence': confidence, 'distance': detection_distance}
 
-        if best_detection:
-            pass
-        else:
-            best_detection.update({'x1y1': False, 'x2y2': False, 'head': False, 'confidence': False})
+        if not best_detection:
+            best_detection.update({'x1y1': False, 'x2y2': False, 'head': False, 'confidence': False, 'distance': False})
 
         return best_detection

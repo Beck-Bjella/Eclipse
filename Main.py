@@ -7,21 +7,24 @@ from pynput import keyboard
 import pyfiglet
 import os
 import cv2
+from Overlay import Overlay
 
 
 def on_key_release(key):
     try:
-        if key == keyboard.Key.f1:
+        if key == keyboard.Key.f2:
             aimbot.update_aimimg_status("OFF")
-        if key == keyboard.Key.f3:
-            aimbot.running = False
+        # if key == keyboard.Key.f2:
+        #     print("=====================================================")
+        # if key == keyboard.Key.f3:
+        #     aimbot.running = False
     except NameError:
         pass
 
 
 def on_key_press(key):
     try:
-        if key == keyboard.Key.f1:
+        if key == keyboard.Key.f2:
             aimbot.update_aimimg_status("ON")
     except NameError:
         pass
@@ -74,8 +77,10 @@ def create_config_file():
             print("[!] Invalid input")
         print("")
 
-    normal_scale = float(11 / xy_sensitivity)
-    targeting_scale = float(11 / (xy_sensitivity * (targeting_sensitivity / 100)))
+    normal_scale = float(13.7712 / xy_sensitivity)
+    targeting_scale = float(13.7712 / (xy_sensitivity * (targeting_sensitivity / 100)))
+
+    # 13.7712 for 720p
 
     config_data = {"xy_sensitivity": xy_sensitivity,
                    "targeting_sensitivity": targeting_sensitivity,
@@ -144,7 +149,7 @@ if __name__ == "__main__":
         print("[INFO] Loading neural network model")
 
         config_file = get_config_file()
-        aimbot = Aimbot(0.74, 1, config_file["normal_scale"], config_file["targeting_scale"], config_file["fps"])
+        aimbot = Aimbot(0.5, 0.45, config_file["normal_scale"], config_file["targeting_scale"], config_file["fps"])
         print("")
 
         print("----------------------------------------")
@@ -158,18 +163,27 @@ if __name__ == "__main__":
         listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
         listener.start()
 
-        frame_count = 0
-        start_time = time.time()
+        # overlay = Overlay((0, 0), 1920, 1080)
 
         while aimbot.running:
             screenshot = np.array(mss.mss().grab(aimbot.screenshot_region))
 
-            detection = aimbot.inference(screenshot)
-
-            aimbot.update_running_frame_time(start_time, time.time())
+            detection = aimbot.inference_dist(screenshot)
 
             if aimbot.aiming_status == "ON":
                 aimbot.move_crosshair(detection)
+
+            # overlay.clear()
+            # if detection["x1y1"]:
+            #     overlay.draw_outlined_rect(detection["x1y1"][0] + aimbot.screenshot_region["left"],
+            #                                detection["x1y1"][1] + aimbot.screenshot_region["top"],
+            #                                detection["x2y2"][0] - detection["x1y1"][0],
+            #                                detection["x2y2"][1] - detection["x1y1"][1],
+            #                                (255, 0, 0), 3)
+
+            # overlay.render()
+
+            # aimbot.sleep(0.005)
 
         print("----------------------------------------")
         print("")
