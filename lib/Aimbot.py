@@ -51,15 +51,12 @@ class POINT(ctypes.Structure):
 
 
 class Aimbot:
-    screenshot_region = {'left': 752, 'top': 332, 'width': 416, 'height': 416}
     aiming_status = "OFF"
     running = True
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
 
-    def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, fps):
-        self.running_frame_time = 0
-
+    def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, window_size):
         if not torch.cuda.is_available():
             print("[!] CUDA not available.")
             print("")
@@ -67,25 +64,25 @@ class Aimbot:
             time.sleep(3)
             exit()
 
+        match window_size:
+            case "1920x1080":
+                self.screenshot_region = {'left': 752, 'top': 332, 'width': 416, 'height': 416}  # 1920x1080
+
+            case "1280x720":
+                self.screenshot_region = {'left': 432, 'top': 152, 'width': 416, 'height': 416}  # 1280x720
+
+            case _:
+                self.screenshot_region = {'left': 752, 'top': 332, 'width': 416, 'height': 416}  # 1920x1080
+
         self.normal_scale = normal_scale
         self.targeting_scale = targeting_scale
-        self.fps = fps
 
         self.model = torch.hub.load('ultralytics/yolov5', 'custom', path='lib/weights.pt/', force_reload=True)
         self.model.conf = model_confidence
         self.model.iou = model_iou
 
-    def update_running_frame_time(self, start_time, end_time):
-        self.running_frame_time = (self.running_frame_time + (end_time - start_time)) / 2
-
     def update_aimimg_status(self, updated_value):
-        if updated_value == "toggle":
-            if self.aiming_status == "ON":
-                self.aiming_status = "OFF"
-            else:
-                self.aiming_status = "ON"
-        else:
-            self.aiming_status = updated_value
+        self.aiming_status = updated_value
 
     @staticmethod
     def sleep(duration):
@@ -136,12 +133,13 @@ class Aimbot:
                 head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 3))
 
                 confidence = results[x][4].item()
+                detection_distance = math.dist((208, 208), (head[0], head[1]))
 
                 exclusion_zone = x1 < 40
 
                 if not exclusion_zone and confidence > highest_confidence:
                     highest_confidence = confidence
-                    best_detection = {'x1y1': x1y1, 'x2y2': x2y2, 'head': head, 'confidence': confidence}
+                    best_detection = {'x1y1': x1y1, 'x2y2': x2y2, 'head': head, 'confidence': confidence, 'distance': detection_distance}
 
         if not best_detection:
             best_detection.update({'x1y1': False, 'x2y2': False, 'head': False, 'confidence': False, 'distance': False})
@@ -169,10 +167,9 @@ class Aimbot:
                 head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4.1))
 
                 confidence = results[x][4].item()
+                detection_distance = math.dist((208, 208), (head[0], head[1]))
 
                 exclusion_zone = x1 < 40
-
-                detection_distance = math.dist((208, 208), (head[0], head[1]))
 
                 if not exclusion_zone and detection_distance < closest_detection:
                     closest_detection = detection_distance
