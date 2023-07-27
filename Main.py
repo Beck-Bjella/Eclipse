@@ -1,8 +1,8 @@
 ﻿import time
 import numpy as np
 import mss
-from lib.Aimbot import Aimbot
 import json
+from lib.Aimbot import Aimbot
 from pynput import keyboard
 import os
 
@@ -126,15 +126,32 @@ if __name__ == "__main__":
                 exit()
 
         case "H":
-            print("[INFO] Aimbot Calibration!")
-            print("    * ")
-            print("    * ")
-            print("    * ")
+            print("[INFO] Aimbot Calibration")
+            print("    - If the aimbot is barely moving then you need to increase the sensitivity")
+            print("    - If the aimbot is oscillating around a target then you need to lower the sensitivity")
             print("")
-            print("[INFO] TIPS")
-            print("    * ")
-            print("    * ")
-            print("    * ")
+            print("    - General rules")
+            print("        - Quick/snappy movements = too high sensitivity")
+            print("        - Slow/no movements = too low sensitivity")
+            print("")
+            print("    - Sensitivity scales from (0.0 - 100.0)")
+            print("    - It's recommended to change sensitivity in chucks of 0.1")
+            print("")
+            print("    - The value that works best for you is based on your")
+            print("        - Mouse DPI")
+            print("        - Game Sensitivity")
+            print("")
+            print("[INFO] Hardware Requirements")
+            print("    - You must have a NVIDIA GPU")
+            print("    - You must be on a Windows Computer")
+            print("")
+            print("[INFO] Optimisations")
+            print("    - Close other tabs on your computer")
+            print("")
+            print("    - The faster your GPU the better the aimbot will work")
+            print("")
+            print("    - The lower your graphics in the game are the faster the aimbot will run")
+            print("        - This can make a huge difference")
             print("")
             print("[INFO] Press any key to continue")
 
