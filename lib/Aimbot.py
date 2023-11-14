@@ -1,13 +1,10 @@
 import ctypes
-import cv2
 import math
-import numpy as np
 import time
 import torch
 import win32api
-import win32con
-import win32gui
-import win32ui
+import cv2
+
 
 PUL = ctypes.POINTER(ctypes.c_ulong)
 
@@ -53,6 +50,7 @@ class POINT(ctypes.Structure):
 class Aimbot:
     aiming_status = "OFF"
     running = True
+    visualize = True
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
 
@@ -164,7 +162,7 @@ class Aimbot:
                 x1y1 = x1, y1
                 x2y2 = x2, y2
 
-                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 4.1))
+                head = int(x1 + (abs(x1 - x2) / 2)), int(y1 + (abs(y1 - y2) / 3.9))
 
                 confidence = results[x][4].item()
                 detection_distance = math.dist((208, 208), (head[0], head[1]))
@@ -179,3 +177,24 @@ class Aimbot:
             best_detection.update({'x1y1': False, 'x2y2': False, 'head': False, 'confidence': False, 'distance': False})
 
         return best_detection
+
+    @staticmethod
+    def draw_detection(image, detection):
+        if detection["x1y1"]:
+            x1y1 = detection["x1y1"]
+            x2y2 = detection["x2y2"]
+            x1, y1 = detection["x1y1"]
+            head = detection["head"]
+            confidence = detection["confidence"]
+
+            cv2.rectangle(image, x1y1, x2y2, (255, 0, 0), 2)
+
+            cv2.line(image, (208, 208), head, (255, 0, 0), 2)
+
+            cv2.circle(image, head, 5, (255, 0, 0), -1)
+
+            confidence_text = str(int(confidence * 100)) + "%"
+            cv2.putText(image, text=confidence_text, org=(x1, y1 - 7), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.65, color=(255, 0, 0), thickness=2, lineType=cv2.LINE_AA)
+
+        return image
+    

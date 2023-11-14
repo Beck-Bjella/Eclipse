@@ -5,6 +5,7 @@ import json
 from lib.Aimbot import Aimbot
 from pynput import keyboard
 import os
+import cv2
 
 
 def on_key_release(key):
@@ -47,16 +48,46 @@ def create_default_config_file():
         json.dump(config_data, f, ensure_ascii=False, indent=4)
 
 
-def update_config_file(new_normal_scale, new_targeting_scale):
-    config_file = get_config_file()
+def update_config_file():
+    print("[?] Updating file")
+    print("")
 
-    normal_scale = config_file["normal_scale"]
-    if new_normal_scale:
-        normal_scale = new_normal_scale
+    config_data = get_config_file()
 
-    targeting_scale = config_file["targeting_scale"]
-    if new_targeting_scale:
-        targeting_scale = new_targeting_scale
+    normal_scale = config_data["normal_scale"]
+    targeting_scale = config_data["targeting_scale"]
+    print(f"Current Normal Scale: {normal_scale}")
+    print(f"Current Targeting Scale: {normal_scale}")
+    print()
+
+    valid_input = False
+    while not valid_input:
+        new_normal_scale = input("Enter a new normal scale: ")
+
+        try:
+            normal_scale = float(new_normal_scale)
+            valid_input = True
+
+        except ValueError:
+            print("[!] Invalid input")
+
+        print("")
+
+    valid_input = False
+    while not valid_input:
+        new_targeting_scale = input("Enter a new targeting scale: ")
+
+        try:
+            targeting_scale = float(new_targeting_scale)
+            valid_input = True
+
+        except ValueError:
+            print("[!] Invalid input")
+
+        print("")
+
+    print("----------------------------------------")
+    print("")
 
     config_data = {"normal_scale": normal_scale,
                    "targeting_scale": targeting_scale}
@@ -76,7 +107,7 @@ if __name__ == "__main__":
     print("")
 
     print("[1] Type 'R' to run the aimbot")
-    print("[2] Type 'E' to edit a configuration file")
+    print("[2] Type 'E' to edit/create a configuration file")
     print("[3] Type 'H' for instructions/help")
     print("[4] Type 'Q' to quit the program")
     print("")
@@ -106,7 +137,14 @@ if __name__ == "__main__":
             if not get_config_file():
                 create_default_config_file()
 
-                print("[INFO] New configuration file created.")
+                print("[!] No Configuration file found")
+                print("")
+                print("[?] Creating file...")
+                print("")
+                time.sleep(3)
+                print("----------------------------------------")
+                print("")
+                print("[?] New configuration file created")
                 print("")
                 print("----------------------------------------")
                 print("")
@@ -115,9 +153,9 @@ if __name__ == "__main__":
                 exit()
 
             else:
-                create_default_config_file()
+                update_config_file()
 
-                print("[INFO] New configuration file successfully created.")
+                print("[?] New configuration file successfully created")
                 print("")
                 print("----------------------------------------")
                 print("")
@@ -126,7 +164,7 @@ if __name__ == "__main__":
                 exit()
 
         case "H":
-            print("[INFO] Aimbot Calibration")
+            print("[?] Aimbot Calibration")
             print("    - If the aimbot is barely moving then you need to increase the sensitivity")
             print("    - If the aimbot is oscillating around a target then you need to lower the sensitivity")
             print("")
@@ -134,18 +172,18 @@ if __name__ == "__main__":
             print("        - Quick/snappy movements = too high sensitivity")
             print("        - Slow/no movements = too low sensitivity")
             print("")
-            print("    - Sensitivity scales from (0.0 - 100.0)")
+            print("    - Sensitivity scales from (0.0 - 1.0)")
             print("    - It's recommended to change sensitivity in chucks of 0.1")
             print("")
             print("    - The value that works best for you is based on your")
             print("        - Mouse DPI")
             print("        - Game Sensitivity")
             print("")
-            print("[INFO] Hardware Requirements")
+            print("[?] Hardware Requirements")
             print("    - You must have a NVIDIA GPU")
             print("    - You must be on a Windows Computer")
             print("")
-            print("[INFO] Optimisations")
+            print("[?] Optimisations")
             print("    - Close other tabs on your computer")
             print("")
             print("    - The faster your GPU the better the aimbot will work")
@@ -153,7 +191,7 @@ if __name__ == "__main__":
             print("    - The lower your graphics in the game are the faster the aimbot will run")
             print("        - This can make a huge difference")
             print("")
-            print("[INFO] Press any key to continue")
+            print("[?] Press any key to continue")
 
             wait = input("")
 
@@ -180,7 +218,7 @@ if __name__ == "__main__":
 
             print("----------------------------------------")
             print("")
-            print("[INFO] Aimbot successfully activated")
+            print("[?] Aimbot successfully activated")
             print("")
             print("[1] Hold f2 to enable the aimbot")
             print("[2] Press f3 to quit")
@@ -189,13 +227,24 @@ if __name__ == "__main__":
             listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
             listener.start()
 
+            sct = mss.mss()
+            last = None
             while aimbot.running:
-                screenshot = np.array(mss.mss().grab(aimbot.screenshot_region))
+                screenshot = np.array(sct.grab(aimbot.screenshot_region))
 
                 detection = aimbot.inference_dist(screenshot)
 
+                if aimbot.visualize:
+                    drawn = aimbot.draw_detection(screenshot, detection)
+
+                    cv2.imshow('Eclipse', drawn)
+                    cv2.waitKey(1)
+
                 if aimbot.aiming_status == "ON":
                     aimbot.move_crosshair(detection)
+
+            if aimbot.visualize:
+                cv2.destroyAllWindows()
 
             print("----------------------------------------")
             print("")

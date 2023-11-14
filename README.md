@@ -9,8 +9,8 @@ Eclipse is a neural network aimbot that is designed and optimised for fortnite.
 2. Download the code from my GitHub [repository](https://github.com/Beck-Bjella/Eclipse/), and extract it.
 
 3. Open the extracted file, navigate into the folder named 'Eclipse-main', and copy that folders address.
-
-4. Open a command prompt window and type -
+4. 
+5. Open a command prompt window and type -
 
 ```
 cd (the address you just copyed)
@@ -22,12 +22,17 @@ cd (the address you just copyed)
 pip install -r requirements.txt
 ```
 
-## Usage
+## Info
+1. You must have a dedicated Nvidia GPU
+2. You must have [Nvidia Cuda Installed](https://developer.nvidia.com/cuda-downloads?target_os=Windows)
+3. Your computer needs to be very high-end otherwise you will have poor performance
+
+## Usage 
 
 After going through the installation, run the file - 
 
 ```
-main.py
+python main.py
 ```
 
 ## License
