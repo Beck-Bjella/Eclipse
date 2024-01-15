@@ -46,7 +46,7 @@ This project is distributed under [GNU General Public License v3.0](https://gith
 4. Clean codebase
 5. Create release
 
-# Future
+## Future
 1. Multiprocessing for screenshots vs. infrencing
 2. Leading shots
 3. Autofire shotguns
