@@ -2,15 +2,13 @@
 pynput
 pywin32
 mss
-pyfiglet
 
 # CUDA Version of PyTorch
-torch --index-url https://download.pytorch.org/whl/cu121 --upgrade --force-reinstall
-torchvision --index-url https://download.pytorch.org/whl/cu121 --upgrade --force-reinstall
-torchaudio --index-url https://download.pytorch.org/whl/cu121 --upgrade --force-reinstall
+torch --index-url --upgrade https://download.pytorch.org/whl/cu124
+torchvision --index-url --upgrade https://download.pytorch.org/whl/cu124
+torchaudio --index-url --upgrade https://download.pytorch.org/whl/cu124
 
 # YOLOv5 requirements -> from github/ultralytics/yolov5
-# Base
 gitpython>=3.1.30
 matplotlib>=3.3
 numpy>=1.22.2

@@ -50,7 +50,7 @@ class POINT(ctypes.Structure):
 class Aimbot:
     aiming_status = "OFF"
     running = True
-    visualize = True
+    visualize = False
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
 
