@@ -37,7 +37,7 @@ To configure Eclipse, edit the `lib/config.json` file directly. This file contai
 ### Configuration Options
 - **normal_scale**: Controls the general aiming sensitivity, corresponding to Fortnite’s X/Y sensitivity.
 - **targeting_scale**: Controls sensitivity when aiming down sights (right-click to aim), corresponding to Fortnite’s targeting sensitivity.  
-  *Note*: Ensure that your in-game targeting and scope sensitivities are the same for best accuracy.
+  *Note*: Ensure that your in-game targeting and scope sensitivities are the same.
 - **game_resolution**: Set to match your Fortnite resolution. Supported options are `"1920x1080"` and `"1280x720"`.
 
 ### Example `config.json` Files
@@ -65,7 +65,7 @@ You can use these controls to interact with Eclipse:
 - [**F2**] Hold to enable the aimbot.
 - [**F3**] Toggle visualization window open/closed. (Visualization window shows what the aimbot is targeting)
 - [**F4**] Quit the program.
-- 
+
 ## Contributing
 Contributions are welcome! Please feel free to submit a pull request or open an issue if you have any suggestions or improvements.
 
