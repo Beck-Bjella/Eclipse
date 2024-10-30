@@ -73,11 +73,11 @@ class Aimbot:
     """
     aiming_status = "OFF"
     running = True
-    visualize = False
+    visualize = True
     extra = ctypes.c_ulong(0)
     ii_ = Input_I()
 
-    def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, window_size):
+    def __init__(self, model_confidence, model_iou, normal_scale, targeting_scale, visualize, window_size):
         """
         Initializes the Aimbot with configuration for object detection and screen regions.
         """
@@ -87,6 +87,9 @@ class Aimbot:
             print("Quitting...")
             time.sleep(3)
             exit()
+
+        # Set visualize flag
+        self.visualize = visualize
 
         # Screen region based on window size
         match window_size:
