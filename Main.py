@@ -16,6 +16,10 @@ def on_key_release(key):
         if key == keyboard.Key.f2:
             aimbot.update_aimimg_status("OFF")
         if key == keyboard.Key.f3:
+            if not aimbot.visualize:
+                aimbot.visualize_open = True
+            aimbot.visualize = not aimbot.visualize
+        if key == keyboard.Key.f4:
             aimbot.running = False
     except NameError:
         pass
@@ -28,7 +32,6 @@ def on_key_press(key):
     try:
         if key == keyboard.Key.f2:
             aimbot.update_aimimg_status("ON")
-
     except NameError:
         pass
 
@@ -56,7 +59,6 @@ def create_config_file():
     config_data = {
         "normal_scale": 0.1,
         "targeting_scale": 0.2,
-        "visualize": True,
         "resolution": "1920x1080"
     }
 
@@ -64,75 +66,34 @@ def create_config_file():
         json.dump(config_data, f, ensure_ascii=False, indent=4)
 
 
-def update_config_file():
+def validate_config(config_path="lib/config.json"):
     """
-    Updates the configuration file with inputted values.
+    Validates the configuration file.
     """
-    print("[?] Updating file\n")
+    # Load the config file
+    try:
+        with open(config_path, "r") as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Configuration file not found at {config_path}.")
+    except json.JSONDecodeError:
+        raise ValueError("Invalid JSON format in config file. Please check for syntax errors.")
 
-    config_data = get_config_file()
-    print(f"Current Configuration:")
-    print(f" - Normal Scale: {config_data["normal_scale"]}")
-    print(f" - Targeting Scale: {config_data["targeting_scale"]}")
-    print(f" - Visualize: {config_data["visualize"]}")
-    print(f" - Resolution: {config_data["resolution"]}\n")
-
-    # Update normal scale with user input
-    valid_input = False
-    while not valid_input:
-        new_normal_scale = input("Enter a new normal scale: ")
-        try:
-            normal_scale = float(new_normal_scale)
-            valid_input = True
-        except ValueError:
-            print("[!] Invalid input\n")
-    print()
-
-    # Update targeting scale with user input
-    valid_input = False
-    while not valid_input:
-        new_targeting_scale = input("Enter a new targeting scale: ")
-        try:
-            targeting_scale = float(new_targeting_scale)
-            valid_input = True
-        except ValueError:
-            print("[!] Invalid input\n")
-    print()
-
-    # Update visualization with user input
-    valid_input = False
-    while not valid_input:
-        new_visualize = input("Enable visualization? (Y/N): ")
-        if new_visualize in {"Y", "N"}:
-            visualize = True if new_visualize == "Y" else False
-            valid_input = True
-        else:
-            print("[!] Invalid input\n")
-    print()
-
-    # Update resolution with user input
-    valid_input = False
-    while not valid_input:
-        print("[?] Valid Resolutions:")
-        print("    - 1920x1080")
-        print("    - 1280x720")
-        new_resolution = input("Enter a new resolution: ")
-        if new_resolution in {"1920x1080", "1280x720"}:
-            resolution = new_resolution
-            valid_input = True
-        else:
-            print("[!] Invalid input\n")
-    print()
-
-    # Save new configuration
-    config_data = {
-        "normal_scale": normal_scale,
-        "targeting_scale": targeting_scale,
-        "visualize": visualize,
-        "resolution": resolution
+    # Expected config format
+    expected_config = {
+        "normal_scale": (float, 0.0),
+        "targeting_scale": (float, 0.0),
+        "resolution": (str, ["1920x1080", "1280x720"])
     }
-    with open('lib/config.json', 'w', encoding='utf-8') as f:
-        json.dump(config_data, f, ensure_ascii=False, indent=4)
+
+    # Check each value
+    for key, (expected_type, valid_values) in expected_config.items():
+        if key not in config:
+            raise KeyError(f"Missing '{key}' in config file.")
+        if not isinstance(config[key], expected_type):
+            raise TypeError(f"Invalid type for '{key}' in config file. Expected {expected_type.__name__} not {type(config[key]).__name__}.")
+        if isinstance(valid_values, list) and config[key] not in valid_values:
+            raise ValueError(f"Invalid value for '{key}' in config file. Expected one of {valid_values}.")
 
 
 if __name__ == "__main__":
@@ -142,6 +103,9 @@ if __name__ == "__main__":
     # Create a configuration file
     if not get_config_file():
         create_config_file()
+
+    # Validate the configuration file
+    validate_config()
 
     print(r" ____________________ .____    ._____________  ____________________")
     print(r"\_   _____/\_   ___ \|    |   |   \______   \/   _____/\_   _____/")
@@ -183,17 +147,17 @@ if __name__ == "__main__":
             print("        - normal_scale: Controls general aiming sensitivity, corresponding to Fortnite’s X/Y sensitivity.")
             print("        - targeting_scale: Controls sensitivity when aiming down sights (right-click), corresponding to Fortnite’s targeting sensitivity.")
             print("             [TIP]: If in-game targeting sensitivity is set to 50% of X/Y, try setting targeting_scale to about 2x normal_scale.")
-            print("        - visualize: Set to `true` to open a separate window for displaying bounding boxes around detected targets, useful for calibration.")
-            print("        - game_resolution: Set to match your Fortnite resolution for best accuracy (options: '1920x1080', '1280x720').\n")
+            print("        - game_resolution: Set to match your Fortnite resolution (options: '1920x1080', '1280x720').\n")
 
             print("[?] Calibration Tips")
             print("    - Calibration may take a few attempts for best results.")
             print("    - Adjust in 0.1 increments for both normal_scale and targeting_scale.")
-            print("    - If movements are too fast, lower sensitivity; if too slow, increase it.\n")
+            print("    - If movements are too chaotic, lower sensitivity; if too slow, increase it.\n")
 
             print("[?] Key Controls")
-            print("    - Press 'F2' to enable/disable the aimbot (hold to keep it active).")
-            print("    - Press 'F3' to quit the program.\n")
+            print("    - Hold 'F2' to enable the aimbot (hold to keep it active).")
+            print("    - Press 'F3' to toggle visualization window.")
+            print("    - Press 'F4' to quit the program.\n")
 
             print("[?] Requirements and Tips")
             print("    - Requires an NVIDIA GPU and a Windows computer.")
@@ -201,7 +165,7 @@ if __name__ == "__main__":
             print("    - Lower Fortnite graphics settings to increase performance.")
             print("    - Close and restart Eclipse after making any changes to `config.json`.\n")
 
-            print("Press any key to return to the main menu.")
+            print("Press any key to quit.")
             input("")  # Pauses to let the user read the help section
             print("----------------------------------------\n")
             print("Quitting...")
@@ -216,14 +180,14 @@ if __name__ == "__main__":
                 0.45,
                 config_file["normal_scale"],
                 config_file["targeting_scale"],
-                config_file["visualize"],
                 config_file["resolution"]
             )
             time.sleep(1)
             print("\n----------------------------------------\n")
             print("[?] Aimbot successfully activated\n")
             print("[1] Hold f2 to enable the aimbot")
-            print("[2] Press f3 to quit\n")
+            print("[2] Press f3 to toggle visualization window")
+            print("[3] Press f4 to quit\n")
 
             # Setup key listeners
             listener = keyboard.Listener(on_release=on_key_release, on_press=on_key_press)
@@ -231,6 +195,7 @@ if __name__ == "__main__":
 
             # Main capture loop
             sct = mss.mss()
+            visualize_open = False
             while aimbot.running:
                 screenshot = np.array(sct.grab(aimbot.screenshot_region))
 
@@ -242,6 +207,10 @@ if __name__ == "__main__":
                     drawn = aimbot.draw_detection(screenshot, detection)
                     cv2.imshow('Aimbot Visualization', drawn)
                     cv2.waitKey(1)
+                else:
+                    if aimbot.visualize_open:
+                        cv2.destroyAllWindows()
+                        aimbot.visualize_open = False
 
                 # Move crosshair
                 if aimbot.aiming_status == "ON":

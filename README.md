@@ -32,14 +32,13 @@ Ensure Python 3.8 or later is installed on your computer. You can download Pytho
 
 ## Configuration
 
-To configure Eclipse, edit the `lib/config.json` file directly. This file contains settings for aiming sensitivity, visualization, and screen resolution.
+To configure Eclipse, edit the `lib/config.json` file directly. This file contains settings for aiming sensitivity and screen resolution.
 
 ### Configuration Options
 - **normal_scale**: Controls the general aiming sensitivity, corresponding to Fortnite’s X/Y sensitivity.
 - **targeting_scale**: Controls sensitivity when aiming down sights (right-click to aim), corresponding to Fortnite’s targeting sensitivity.  
   *Note*: Ensure that your in-game targeting and scope sensitivities are the same for best accuracy.
-- **visualize**: Set to `true` to enable visualization mode, which opens a separate window to show bounding boxes around detected targets. This mode is useful for calibration.
-- **game_resolution**: Set to match your screen resolution for accurate detection. Supported options are `"1920x1080"` and `"1280x720"`.
+- **game_resolution**: Set to match your Fortnite resolution. Supported options are `"1920x1080"` and `"1280x720"`.
 
 ### Example `config.json` Files
 (1920x1080 resolution):
@@ -47,26 +46,26 @@ To configure Eclipse, edit the `lib/config.json` file directly. This file contai
 {
     "normal_scale": 0.1,
     "targeting_scale": 0.2,
-    "visualize": false,
     "game_resolution": "1920x1080"
 }
 ```
 
-(1280x720 resolution) w/ visualization:
+(1280x720 resolution):
 ```json
 {
-    "normal_scale": 0.1,
-    "targeting_scale": 0.2,
-    "visualize": true,
+    "normal_scale": 0.2,
+    "targeting_scale": 0.4,
     "game_resolution": "1280x720"
 }
 ```
 
 ## Usage
-Once Eclipse is running and correctly configured, all you have to do is hold f2 to enable the aimbot. 
-The aimbot will automatically target the nearest enemy player within your crosshair. 
-Pressing f3 will stop the programming.
-
+Once Eclipse is running and correctly configured, all you have to do is launch Fortnite and start playing. 
+You can use these controls to interact with Eclipse:
+- [**F2**] Hold to enable the aimbot.
+- [**F3**] Toggle visualization window open/closed. (Visualization window shows what the aimbot is targeting)
+- [**F4**] Quit the program.
+- 
 ## Contributing
 Contributions are welcome! Please feel free to submit a pull request or open an issue if you have any suggestions or improvements.
 
