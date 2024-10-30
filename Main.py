@@ -139,6 +139,10 @@ if __name__ == "__main__":
     """
     Starting point of the program. Handles main menu and input logic.
     """
+    # Create a configuration file
+    if not get_config_file():
+        create_config_file()
+
     print(r" ____________________ .____    ._____________  ____________________")
     print(r"\_   _____/\_   ___ \|    |   |   \______   \/   _____/\_   _____/")
     print(r" |    __)_ /    \  \/|    |   |   ||     ___/\_____  \  |    __)_")
@@ -149,7 +153,6 @@ if __name__ == "__main__":
 
     # User options
     print("[1] Type 'R' to run the aimbot")
-    print("[2] Type 'E' to edit/create a configuration file")
     print("[3] Type 'H' for instructions/help")
     print("[4] Type 'Q' to quit the program\n")
 
@@ -159,7 +162,7 @@ if __name__ == "__main__":
     while not valid_input:
         option = input("Please select an option: ")
 
-        if option in {"Q", "E", "R", "H"}:
+        if option in {"Q", "R", "H"}:
             valid_input = True
         else:
             print("[!] Invalid input\n")
@@ -173,62 +176,32 @@ if __name__ == "__main__":
             time.sleep(3)
             quit()
 
-        case "E":  # Edit or create configuration file
-            if not get_config_file():
-                create_config_file()
-                print("[!] No Configuration file found\n")
-                print("[?] Creating file...\n")
-                time.sleep(3)
-                print("----------------------------------------\n")
-                print("[?] New configuration file created\n")
-                print("----------------------------------------\n")
-                print("Quitting...")
-                time.sleep(3)
-                exit()
-            else:
-                update_config_file()
-                print("[?] Configuration file successfully updated\n")
-                print("----------------------------------------\n")
-                print("Quitting...")
-                time.sleep(3)
-                exit()
-
         case "H":  # Help and instructions
-            # Display Help and Instructions
-            print("[?] Aimbot Calibration")
-            print("    - Sensitivity Settings: (Edit in config)")
-            print("        - Normal Sensitivity: Used for general movement adjustments; set this to match your in-game X/Y sensitivity.")
-            print("        - Targeting Sensitivity: Activated when right-click (aim) is pressed; set this to match your in-game targeting sensitivity.")
-            print("        - [!]: Ensure that your in-game targeting and scope sensitivities are the same to keep the aimbot’s targeting accurate.")
-            print("        - Recommended targeting scale: If in-game targeting is 50% of normal sensitivity, set the aimbot's targeting scale approximately 2x the normal scale.")
-            print("    - Adjustment Process:")
-            print("        - Calibration is challenging and typically requires several attempts to get right.")
-            print("        - Try adjusting sensitivity in 0.1 increments (range: 0.0 - 1.0) and observe results.")
-            print("        - If movements are chaotic, reduce sensitivity; if too slow, increase it.")
-            print("    - Optimal sensitivity values depend on your Mouse DPI and Fortnite sensitivity settings.\n")
+            print("[?] Configuration Guide")
+            print("    - To configure the aimbot, edit `lib/config.json` directly with a text editor.")
+            print("    - Configuration options:")
+            print("        - normal_scale: Controls general aiming sensitivity, corresponding to Fortnite’s X/Y sensitivity.")
+            print("        - targeting_scale: Controls sensitivity when aiming down sights (right-click), corresponding to Fortnite’s targeting sensitivity.")
+            print("             [TIP]: If in-game targeting sensitivity is set to 50% of X/Y, try setting targeting_scale to about 2x normal_scale.")
+            print("        - visualize: Set to `true` to open a separate window for displaying bounding boxes around detected targets, useful for calibration.")
+            print("        - game_resolution: Set to match your Fortnite resolution for best accuracy (options: '1920x1080', '1280x720').\n")
 
-            print("[?] Visualization Mode (Edit in config)")
-            print("    - Opens a separate window that shows detected targets in real-time.")
-            print("    - Visualization helps in assessing the aimbot’s detection accuracy and calibrating.\n")
-            print("    - [!]: Visualization mode may drastically slow down the aimbot’s performance.\n")
+            print("[?] Calibration Tips")
+            print("    - Calibration may take a few attempts for best results.")
+            print("    - Adjust in 0.1 increments for both normal_scale and targeting_scale.")
+            print("    - If movements are too fast, lower sensitivity; if too slow, increase it.\n")
 
-            print("[?] Game Resolution (Edit in config)")
-            print("    - Ensure 'game_resolution' in config matches your Fortnite resolution.")
-            print("    - Supported resolutions: '1920x1080' and '1280x720'.\n")
-
-            print("[?] Key Controls (Once running)")
-            print("    - Hold 'F2' to enable aimbot.")
+            print("[?] Key Controls")
+            print("    - Press 'F2' to enable/disable the aimbot (hold to keep it active).")
             print("    - Press 'F3' to quit the program.\n")
 
-            print("[?] Hardware Requirements")
+            print("[?] Requirements and Tips")
             print("    - Requires an NVIDIA GPU and a Windows computer.")
-            print("    - Close unnecessary applications to improve processing speed.\n")
+            print("    - Closing other programs can improve responsiveness.")
+            print("    - Lower Fortnite graphics settings to increase performance.")
+            print("    - Close and restart Eclipse after making any changes to `config.json`.\n")
 
-            print("[?] Tips")
-            print("    - Lower in-game graphics settings and resolution to increase aimbot speed.")
-            print("    - Without correctly calibrated sensitives, the aimbot may feel completely broken.\n")
-
-            print("Press any key to quit.")
+            print("Press any key to return to the main menu.")
             input("")  # Pauses to let the user read the help section
             print("----------------------------------------\n")
             print("Quitting...")
@@ -236,14 +209,6 @@ if __name__ == "__main__":
             exit()
 
         case "R":  # Run aimbot
-            # Load configuration file
-            if not get_config_file():
-                print("[!] Must have a configuration file to run the aimbot\n")
-                print("----------------------------------------\n")
-                print("Quitting...")
-                time.sleep(3)
-                exit()
-
             # Initialize aimbot
             config_file = get_config_file()
             aimbot = Aimbot(
